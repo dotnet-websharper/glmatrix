@@ -79,11 +79,11 @@
     <Folder Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\IntelliFactory.WebSharper.JQuery\IntelliFactory.WebSharper.JQuery.fsproj">
+    <ProjectReference Include="..\..\IntelliFactory.WebSharper.GlMatrix\IntelliFactory.WebSharper.GlMatrix.fsproj">
       <Project>{730AE40A-001C-4137-972D-898DC7C2BF0A}</Project>
       <Name>IntelliFactory.WebSharper.JQuery</Name>
     </ProjectReference>
-    <ProjectReference Include="..\samples\IntelliFactory.WebSharper.JQuery.Samples.fsproj">
+    <ProjectReference Include="..\samples\IntelliFactory.WebSharper.GlMatrix.Samples.fsproj">
       <Project>{BB42AD3F-9110-4D95-A23F-36B4F2F900FA}</Project>
       <Name>IntelliFactory.WebSharper.JQuery.Samples</Name>
     </ProjectReference>

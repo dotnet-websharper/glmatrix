@@ -8,10 +8,7 @@
   </PropertyGroup>
   <Import Project="$(INTELLIFACTORY)/build/IntelliFactory.Docbook.targets" />
   <ItemGroup>
-    <Content Include="IntelliFactory.JQuery.Documentation.xml" />
-    <None Include="jq-ajax.png" />
-    <None Include="jq-dom-manipulation.png" />
-    <None Include="jq-events.png" />
+    <Content Include="IntelliFactory.GlMatrix.Documentation.xml" />
     <Content Include="Usage.txt" />
     <Content Include="Examples.txt" />
   </ItemGroup>

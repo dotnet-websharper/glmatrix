@@ -21,9 +21,7 @@ module Main =
         ["webgl"; "experimental-webgl"]
         |> List.tryPick (fun s ->
             let gl = As<WebGLRenderingContext> (canvas.GetContext s)
-            if gl = null then None else
-                gl.Viewport(0, 0, canvas.Width, canvas.Height)
-                Some gl)
+            if gl = null then None else Some gl)
 
     [<JavaScript>]
     let BasicContext () =
@@ -31,7 +29,7 @@ module Main =
         match CreateContext element with
         | None -> ()
         | Some gl ->
-            gl.ClearColor(0., 0., 0., 1.)
+            gl.ClearColor(0.2, 0., 0.4, 1.)
             gl.Clear(gl.COLOR_BUFFER_BIT)
             gl.Flush()
         element
@@ -53,7 +51,6 @@ void main(void)
     [<JavaScript>]
     let BasicFragmentShader = "
 precision highp float;
-uniform float angle;
 void main(void)
 {
     gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);
@@ -62,7 +59,6 @@ void main(void)
     [<JavaScript>]
     let TexturingFragmentShader = "
 precision highp float;
-uniform float angle;
 uniform sampler2D tex;
 varying vec2 textureCoord;
 void main(void)
@@ -102,29 +98,19 @@ void main(void)
         program
 
     [<JavaScript>]
-    let fieldOfView = 45.
-    [<JavaScript>]
-    let aspectRatio = 4./3.
-    [<JavaScript>]
-    let nearPlane = 1.
-    [<JavaScript>]
-    let farPlane = 10000.
-
-    [<JavaScript>]
     let SetupView (gl : WebGLRenderingContext, program) =
+        let fieldOfView = 45.
+        let aspectRatio = 4./3.
+        let nearPlane = 1.
+        let farPlane = 10000.
         let perspectiveMatrix = Mat4.Perspective(fieldOfView, aspectRatio, nearPlane, farPlane)
         let uPerspectiveMatrix = gl.GetUniformLocation(program, "perspectiveMatrix")
         gl.UniformMatrix4fv(uPerspectiveMatrix, false, As<Float32Array> perspectiveMatrix)
 
     [<JavaScript>]
     let DrawRotatingObject (gl : WebGLRenderingContext,
-                            buf : WebGLBuffer,
-                            program : WebGLProgram,
-                            numVertices) =
-        gl.ClearColor(0., 0., 0., 1.)
-        gl.ClearDepth(1.)
-        gl.Enable(gl.DEPTH_TEST)
-        gl.DepthFunc(gl.LEQUAL)
+                            program, buf, numVertices) =
+        gl.ClearColor(0., 0., 0., 0.)
         gl.UseProgram(program)
         SetupView(gl, program)
         let uModelViewMatrix = gl.GetUniformLocation(program, "modelViewMatrix")
@@ -135,6 +121,7 @@ void main(void)
             Mat4.RotateY(modelViewMatrix, angle) |> ignore
             gl.UniformMatrix4fv(uModelViewMatrix, false, As<Float32Array> modelViewMatrix)
             gl.Clear(gl.COLOR_BUFFER_BIT ||| gl.DEPTH_BUFFER_BIT)
+            gl.BindBuffer(gl.ARRAY_BUFFER, buf)
             gl.DrawArrays(gl.TRIANGLES, 0, numVertices)
             gl.Flush()
             JavaScript.SetTimeout (RunFrame ((i + 20) % 1000)) 20 |> ignore
@@ -142,91 +129,105 @@ void main(void)
 
     [<JavaScript>]
     let DrawTriangle () =
-        HTML5.Tags.Canvas []
-        |>! OnAfterRender (fun el ->
-            match CreateContext el with
-            | None -> JavaScript.Alert "Couldn't create WebGL context."
-            | Some gl ->
-                let program = CreateProgram(gl, BasicVertexShader, BasicFragmentShader)
-                let vertexPosition = gl.GetAttribLocation(program, "position")
-                gl.EnableVertexAttribArray(vertexPosition)
-                let vertexBuffer = gl.CreateBuffer()
-                let vertices = Float32Array(
-                                [|
-                                     0.0;  1.0; 0.0;
-                                    -1.0; -1.0; 0.0;
-                                     1.0; -1.0; 0.0;
-                                |])
-                gl.BindBuffer(gl.ARRAY_BUFFER, vertexBuffer)
-                gl.BufferData(gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW)
-                gl.VertexAttribPointer(vertexPosition, 3, gl.FLOAT, false, 0, 0)
-                DrawRotatingObject(gl, vertexBuffer, program, vertices.Length / 3)
-        )
+        let canvas = HTML5.Tags.Canvas []
+        match CreateContext canvas with
+        | None -> JavaScript.Alert "Couldn't create WebGL context."
+        | Some gl ->
+            let program = CreateProgram(gl, BasicVertexShader, BasicFragmentShader)
+            let vertexPosition = gl.GetAttribLocation(program, "position")
+            gl.EnableVertexAttribArray(vertexPosition)
+            let vertexBuffer = gl.CreateBuffer()
+            let vertices = Float32Array([| 0.0;  1.0; 0.0;
+                                          -1.0; -1.0; 0.0;
+                                           1.0; -1.0; 0.0; |])
+            gl.BindBuffer(gl.ARRAY_BUFFER, vertexBuffer)
+            gl.BufferData(gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW)
+            gl.VertexAttribPointer(vertexPosition, 3, gl.FLOAT, false, 0, 0)
+            DrawRotatingObject(gl, program, vertexBuffer, 3)
+        canvas
 
     [<JavaScript>]
-    let MakeTexture (canvas:Element) f =
-        let canvas = As<CanvasElement> <| canvas.Dom
-        canvas.Width <- 256
-        canvas.Height <- 256
-        let ctx = canvas.GetContext("2d")
-        ctx.FillStyle <- "rgba(0, 0, 100, 1.0)"
-        ctx.FillRect(0., 0., 255., 255.)
-        ctx.FillStyle <- "#00f";
-        ctx.StrokeStyle <- "#fff";
-        ctx.Font <- "italic 30px sans-serif";
-        ctx.TextBaseline <- TextBaseLine.Top;
-        ctx.FillText ("Importing a texture", 0., 0.);
-        ctx.Font <- "bold 30px sans-serif";
-        ctx.StrokeText("From a Canvas!", 0., 50.);
-        let imageData = ctx.GetImageData(0., 0., float canvas.Width, float canvas.Height)
-        f imageData
+    let MakeAndBindTexture (gl : WebGLRenderingContext) f =
+        Img []
+        |>! Events.OnLoad (fun img ->
+            let tex = gl.CreateTexture()
+            gl.ActiveTexture(gl.TEXTURE0)
+            gl.BindTexture(gl.TEXTURE_2D, tex)
+            gl.PixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 1)
+            gl.TexImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, img.Dom)
+            gl.TexParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR)
+            gl.TexParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR)
+            f ())
+        |> fun img -> img -< [Attr.Src "wslogo.jpg"]
+        |> ignore
+
+    [<JavaScript>]
+    let CreateSquare (gl : WebGLRenderingContext, program) =
+        let vertexPosition = gl.GetAttribLocation(program, "position")
+        gl.EnableVertexAttribArray(vertexPosition)
+        let vertexTexCoord = gl.GetAttribLocation(program, "texCoord")
+        gl.EnableVertexAttribArray(vertexTexCoord)
+        let vertexBuffer = gl.CreateBuffer()
+        let vertices = Float32Array([| -1.; -1.; 0.;    0.; 0.;
+                                       -1.;  1.; 0.;    0.; 1.;
+                                        1.; -1.; 0.;    1.; 0.;
+                                        1.;  1.; 0.;    1.; 1.;
+                                       -1.;  1.; 0.;    0.; 1.;
+                                        1.; -1.; 0.;    1.; 0.; |])
+        gl.BindBuffer(gl.ARRAY_BUFFER, vertexBuffer)
+        gl.BufferData(gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW)
+        let floatSize = Float32Array.BYTES_PER_ELEMENT
+        gl.VertexAttribPointer(vertexPosition, 3, gl.FLOAT, false, 5*floatSize, 0)
+        gl.VertexAttribPointer(vertexTexCoord, 2, gl.FLOAT, false, 5*floatSize, 3*floatSize)
+        (vertexBuffer, 6)
 
     [<JavaScript>]
     let DrawTexturedSquare () =
         let otherCanvas = HTML5.Tags.Canvas []
+        let canvas = HTML5.Tags.Canvas [Attr.Style "position:absolute;"]
+        match CreateContext canvas with
+        | None -> JavaScript.Alert "Couldn't create WebGL context."
+        | Some gl ->
+            let program = CreateProgram(gl, BasicVertexShader, TexturingFragmentShader)
+            let vertexBuffer, numberVertices = CreateSquare(gl, program)
+            MakeAndBindTexture gl <| fun () ->
+                gl.UseProgram(program)
+                let u_texture = gl.GetUniformLocation(program, "tex")
+                gl.Uniform1i(u_texture, 0)
+                DrawRotatingObject(gl, program, vertexBuffer, numberVertices)
+        Div [Attr.Style "position:relative;"] -< [
+            canvas
+            P [Text "This sample shows how you can texture a polygon."]
+            P [Text "One option is to simply grab the data from an <img> element."]
+            P [Text "You can also see that a WebGL context can be placed anywhere."]]
+
+    [<JavaScript>]
+    let DrawTunnel () =
+        let otherCanvas = HTML5.Tags.Canvas []
         let canvas = HTML5.Tags.Canvas []
-        canvas
-        |>! OnAfterRender (fun el ->
-            match CreateContext el with
-            | None -> JavaScript.Alert "Couldn't create WebGL context."
-            | Some gl ->
-                let program = CreateProgram(gl, BasicVertexShader, TexturingFragmentShader)
-                let vertexPosition = gl.GetAttribLocation(program, "position")
-                gl.EnableVertexAttribArray(vertexPosition)
-                let vertexTexCoord = gl.GetAttribLocation(program, "texCoord")
-                gl.EnableVertexAttribArray(vertexTexCoord)
-                let vertexBuffer = gl.CreateBuffer()
-                let vertices = Float32Array(
-                    [|
-                        -1.0; -1.0; 0.0;   -1.0; 1.0; 0.0;   1.0; -1.0; 0.0;
-                         1.0;  1.0; 0.0;   -1.0; 1.0; 0.0;   1.0; -1.0; 0.0;
-                    |])
-                gl.BindBuffer(gl.ARRAY_BUFFER, vertexBuffer)
-                gl.BufferData(gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW)
-                gl.VertexAttribPointer(vertexPosition, 3, gl.FLOAT, false, 0, 0)
-                let textureBuffer = gl.CreateBuffer()
-                let texCoords = Float32Array(
-                    [| 0.; 0.;  0.; 1.;  1.; 0.;  1.; 1.;  0.; 1.;  1.; 0. |])
-                gl.BindBuffer(gl.ARRAY_BUFFER, textureBuffer)
-                gl.BufferData(gl.ARRAY_BUFFER, texCoords, gl.STATIC_DRAW)
-                gl.VertexAttribPointer(vertexTexCoord, 2, gl.FLOAT, false, 0, 0)
-                MakeTexture otherCanvas (fun imageData ->
-                    let tex = gl.CreateTexture()
-                    gl.ActiveTexture(gl.TEXTURE0)
-                    gl.BindTexture(gl.TEXTURE_2D, tex)
-                    gl.PixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 1)
-                    gl.TexImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, imageData)
-                    gl.TexParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR)
-                    gl.TexParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR)
-                    gl.UseProgram(program)
-                    let u_texture = gl.GetUniformLocation(program, "tex")
-                    gl.Uniform1i(u_texture, 0)
-                    let err = gl.GetError()
-                    if err <> gl.NO_ERROR then
-                        JavaScript.Alert (string err)
-                    DrawRotatingObject(gl, vertexBuffer, program, vertices.Length / 3)
-                )
-        ) |> ignore
+        match CreateContext canvas with
+        | None -> JavaScript.Alert "Couldn't create WebGL context."
+        | Some gl ->
+            let program = CreateProgram(gl, BasicVertexShader, TexturingFragmentShader)
+            let vertexBuffer, numberVertices = CreateSquare(gl, program)
+            gl.UseProgram(program)
+            let projectionMatrix = Mat4.Ortho(-1., 1., -1., 1., 0., 1.)
+            let uPerspectiveMatrix = gl.GetUniformLocation(program, "perspectiveMatrix")
+            gl.UniformMatrix4fv(uPerspectiveMatrix, false, As<Float32Array> projectionMatrix)
+            let uModelViewMatrix = gl.GetUniformLocation(program, "modelViewMatrix")
+            gl.ClearColor(0., 0., 0., 0.)
+            MakeAndBindTexture gl <| fun () ->
+                let rec RunFrame (i : int) () =
+                    let angle = 2. * float i * System.Math.PI / 1000.
+                    let modelViewMatrix = Mat4.Identity(Mat4.Create())
+                    Mat4.Scale(modelViewMatrix, [|0.999**float i; 0.999**float i; 1.;|]) |> ignore
+                    Mat4.RotateZ(modelViewMatrix, angle) |> ignore
+                    gl.UniformMatrix4fv(uModelViewMatrix, false, As<Float32Array> modelViewMatrix)
+                    gl.Clear(gl.DEPTH_BUFFER_BIT)
+                    gl.DrawArrays(gl.TRIANGLES, 0, 6)
+                    gl.Flush()
+                    JavaScript.SetTimeout (RunFrame ((i + 20) % 5000)) 20 |> ignore
+                RunFrame 0 ()
         canvas
 
     [<JavaScript>]
@@ -236,6 +237,8 @@ void main(void)
             BasicContext ()
             H2 [Text "Draw a triangle"]
             DrawTriangle ()
+            H2 [Text "Draw a textured square"]
+            DrawTunnel ()
             H2 [Text "Draw a textured square"]
             DrawTexturedSquare ()
         ]

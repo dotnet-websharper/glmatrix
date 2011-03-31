@@ -3,7 +3,7 @@
       xmlns:xi="http://www.w3.org/2001/XInclude"
       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
       xsi:noNamespaceSchemaLocation="http://www.docbook.org/xml/5.0/xsd/docbook.xsd">
-  <title>JQuery Extensions for WebSharper</title>
+  <title>WebSharper Extension for glMatrix</title>
   <xi:include href="Usage.docbook" />
   <xi:include href="Examples.docbook" />
 </book>
