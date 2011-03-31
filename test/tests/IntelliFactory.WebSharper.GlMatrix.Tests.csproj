@@ -68,6 +68,7 @@
     <Content Include="Web.Release.config">
       <DependentUpon>Web.config</DependentUpon>
     </Content>
+    <Content Include="wslogo.jpg" />
   </ItemGroup>
   <Import Project="$(INTELLIFACTORY)/build/IntelliFactory.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" />
