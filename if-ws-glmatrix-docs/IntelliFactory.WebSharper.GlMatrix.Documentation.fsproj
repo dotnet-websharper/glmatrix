@@ -9,7 +9,7 @@
   <Import Project="$(INTELLIFACTORY)/build/IntelliFactory.Docbook.targets" />
   <ItemGroup>
     <Content Include="IntelliFactory.GlMatrix.Documentation.xml" />
+    <Content Include="Overview.txt" />
     <Content Include="Usage.txt" />
-    <Content Include="Examples.txt" />
   </ItemGroup>
 </Project>

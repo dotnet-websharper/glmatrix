@@ -1,111 +1,41 @@
 % Usage
 
-The jQuery WebSharper extension is as far as possible a one-to-one
-mapping of jQuery.
+The GlMatrix WebSharper extension is as far as possible a one-to-one
+mapping of glMatrix. Therefore, this documentation will only discuss
+the differences between glMatrix and the WebSharper extension. For a
+complete reference, see [the glMatrix homepage][glmatrix-home].
 
-## Selecting DOM nodes
+## Differences with the JavaScript API
 
-jQuery allows you to construct wrappers for elements or Dom nodes and
-create new Dom elements, by supplying a string argument to the jQuery
-function:
+In order to enforce strong typing and take advantage of F# features such as
+method overloading, we made a few modifications over the glMatrix API.
 
-    #javascript
-    var itemElems = jQuery(".Item")
-    var myNewElem = jQuery("<p>Foo</p>")
-    var doc = jQuery(document)
+  * While glMatrix works on `Float32Array` objects, the WebSharper extension
+  defines classes for each one of `Mat4`, `Mat3`, `Vec3` and `Quad4`. These
+  classes inherit from the standard `Float32Array`, which allows you
+  to pass them directly to WebGL methods such as the `Uniform` series.
 
-in the jQuery WebSharper extension, the same functionality is
-provided by the static member `Of` on the JQuery class:
+  * The `mat4.multiply`, `mat4.multiplyVec3` and `mat4.multiplyVec4` methods
+  have been merged into a single `Mat4.Multiply`.
 
-    #fsharp
-    var itemElems = JQuery.Of(".Item")
-    let myNewElem = JQuery.Of("<p>Foo</p>")
-    var doc = JQuery.Of(Document)
+## Using matrix transformations with WebGL
 
-## Working with instance members
-The return value of the `Of` method is a JQuery object
-containing all the familiar instance members.
-
-For example to invoke the ready functions as in:
-
-    #javascript
-    jQuery(document).ready(function(){
-       // Your code here
-     });
-
-you simply write:
+As the name suggests, glMatrix is mainly intended as a toolbox
+for coordinate transformation for WebGL. The following example
+shows a typical use to set the projection and modelview matrices
+of a given WebGL shader program.
 
     #fsharp
-    JQuery.Of(Document).Ready(fun () ->
-        // Your code here
-    )
+    let SetupView (gl : WebGLRenderingContext, program : WebGLProgram) =
+        // Set the projection matrix
+        let proj = Mat4.Perspective(45., 4./3., 0.1, 1000.)
+        let u_projection = gl.GetUniformLocation(program, "projectionMatrix")
+        gl.UniformMatrix4fv(u_projection, false, proj)
 
-In jQuery, functions are often flexible regarding the types of the
-input paratmers. In F# this is represented by overloaded functions
-corresponding to different ways to invoke a method.
+        // Set the modelview matrix
+        let cameraPosition = Mat4.Identity(Mat4.Create())
+        Mat4.Translate(cameraPosition, [|0.2, 2.3, -5.2|]) |> ignore
+        let u_modelview = gl.GetUniformLocation(program, "modelviewMatrix")
+        gl.UniformMatrix4fv(u_modelview, false, cameraPosition)
 
-For example the `fadeOut` function that hides an element after
-applying a fade-out effect accepts various types of arguments, e.g:
-
-    jQuery("#MyElem").fadeOut()
-    jQuery("#MyElem").fadeOut("slow")
-    jQuery("#MyElem").fadeOut(100, function () {alert("Faded out");})
-
-the F# counter part looks like:
-
-    JQ.Of("#MyElem").FadeOut()
-    JQ.Of("#MyElem").FadeOut("slow")
-    JQ.Of("#MyElem").FadeOut(100., fun () -> Window.Alert "Faded out")
-
-
-## Chaining
-
-Just like in pure jQuery, `chaining` of method invocations is
-supported since the result type of most jQuery operations is another
-jQuery object.  Here is an example of chaining in JavaScript:
-
-    #javascript
-    jQuery('#MyDiv').removeClass('Off').addClass('On')
-
-And the corresponding code written in F#:
-
-    #fsharp
-    JQuery.Of("#MyDiv").RemoveClass("Off").AddClass("On")
-
-
-
-## Ignoring the result type
-
-In F#, every expression on a separate line should have type `unit` or
-a warning is thrown. Since all jQuery operations (such as `fadeOut`)
-return a value (most often a jQuery object), warnings would be thrown
-for the examples from above.  For situations when you are not
-interested in the result type of a method invocation, the WebSharper
-extension provides an extra property `Ignore` which does simply
-changes the return type to unit in F#:
-
-    #fsharp
-    JQ.Of("#MyElem").FadeOut().Ignore
-
-
-## Implicit arguments
-
-Callback functions in JavaScript are sometimes passed an implicit
-arguments in form of the `this` object. jQuery makes heavy use of this
-idiom. Here is and example of the `each` function:
-
-    #javascript
-    jQuery("div").each(function () {
-        jQuery(this).hide();
-    });
-
-here the `this` object refers to the current element when traversing
-the jQuery collection.
-
-In the WebSharper extension the this parameter is explicit. The code
-is written as:
-
-    #fsharp
-    JQuery.Of("div").Each(fun el ->
-      JQuery.of(el).Hide().Ignore
-    ))
+[glmatrix-home][http://glmatrix.googlecode.com]
