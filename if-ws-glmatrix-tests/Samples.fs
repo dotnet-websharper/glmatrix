@@ -1,4 +1,4 @@
-﻿namespace IntelliFactory.WebSharper.GlMatrix.Samples
+﻿namespace IntelliFactory.WebSharper.GlMatrix.Tests
 
 open IntelliFactory.WebSharper
 open IntelliFactory.WebSharper.Html
@@ -14,7 +14,7 @@ module Main =
     [<JavaScript>]
     let CreateContext (element : Element) =
         let canvas = As<CanvasElement> element.Dom
-        if (JavaScript.Get "getContext" canvas = JavaScript.Undefined) then
+        if canvas?getContext = JavaScript.Undefined then
             Initialize canvas
         canvas.Width <- 400
         canvas.Height <- 300
@@ -243,9 +243,7 @@ void main(void)
             DrawTexturedSquare ()
         ]
 
-
-[<JavaScriptType>]
-type Samples() = 
+type Samples() =
     inherit Web.Control()
 
     [<JavaScript>]
