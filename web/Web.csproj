@@ -64,9 +64,7 @@
     </Content>
     <Content Include="wslogo.jpg" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Properties\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <ProjectReference Include="..\if-ws-glmatrix\IntelliFactory.WebSharper.GlMatrix.fsproj">
       <Project>{730AE40A-001C-4137-972D-898DC7C2BF0A}</Project>
@@ -76,6 +74,9 @@
       <Project>{BB42AD3F-9110-4D95-A23F-36B4F2F900FA}</Project>
       <Name>IntelliFactory.WebSharper.GlMatrix.Tests</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Properties\Properties.cs" />
   </ItemGroup>
   <ProjectExtensions>
     <VisualStudio>
