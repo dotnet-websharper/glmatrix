@@ -1,20 +1,13 @@
 <ivy-module version="2.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
             xsi:noNamespaceSchemaLocation="http://doiop.com/ivy-2.1.0.xsd">
-  <info organisation="IntelliFactory" module="if-ws-glmatrix" revision="2.3" />
-  <configurations>
-    <conf name="build" />
-    <conf name="default" />
-  </configurations>
+  <info organisation="IntelliFactory" module="if-ws-glmatrix-2.4" revision="2.4" />
   <publications>
-    <artifact name="IntelliFactory.WebSharper.GlMatrix" ext="dll" type="bin" conf="default" />
-    <artifact name="IntelliFactory.WebSharper.GlMatrix" ext="pdb" type="debug" conf="default" />
-    <artifact name="if-ws-glmatrix-docs" ext="zip" type="doc" conf="default" />
+    <artifact name="IntelliFactory.WebSharper.GlMatrix" ext="dll" type="bin" />
+    <artifact name="IntelliFactory.WebSharper.GlMatrix" ext="pdb" type="debug" />
+    <artifact name="if-ws-glmatrix-docs" ext="zip" type="doc" />
   </publications>
   <dependencies>
-    <dependency name="if-ws" rev="latest.integration" conf="build->compiler" />
-    <dependency name="if-ws" rev="latest.integration" conf="default->default" />
-    <dependency name="if-ws-dom" rev="latest.integration" conf="default->default" />
-    <dependency name="if-ws-ig" rev="latest.integration" conf="build->default" />
-    <dependency name="if-ws-webgl" rev="latest.integration" conf="build->default" />
+    <dependency name="if-ws-2.4" rev="latest.integration" branch="2.4" />
+    <dependency name="if-ws-webgl-2.4" rev="latest.integration" branch="2.4" />
   </dependencies>
 </ivy-module>

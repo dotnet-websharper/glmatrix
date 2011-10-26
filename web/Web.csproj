@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -13,6 +13,7 @@
     <RootNamespace>IntellliFactory.WebSharper.JQuery.Tests</RootNamespace>
     <AssemblyName>IntellliFactory.WebSharper.JQuery.Tests</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <UseIISExpress>false</UseIISExpress>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -54,36 +55,28 @@
     <Reference Include="IntelliFactory.WebSharper.Dom" />
     <Reference Include="IntelliFactory.WebSharper.Ecma" />
     <Reference Include="IntelliFactory.WebSharper.Web" />
-    <Reference Include="IntelliFactory.WebSharper.Json" />
     <Reference Include="IntelliFactory.Html" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Test.aspx" />
+    <Content Include="Default.aspx" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
     </Content>
-    <Content Include="Web.Debug.config">
-      <DependentUpon>Web.config</DependentUpon>
-    </Content>
-    <Content Include="Web.Release.config">
-      <DependentUpon>Web.config</DependentUpon>
-    </Content>
     <Content Include="wslogo.jpg" />
   </ItemGroup>
-  <Import Project="$(INTELLIFACTORY)/build/IntelliFactory.WebSharper.Web-2.3.targets" />
-  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" />
+  <ItemGroup />
   <ItemGroup>
-    <Folder Include="Properties\" />
+    <ProjectReference Include="..\if-ws-glmatrix\IntelliFactory.WebSharper.GlMatrix.fsproj">
+      <Project>{730AE40A-001C-4137-972D-898DC7C2BF0A}</Project>
+      <Name>IntelliFactory.WebSharper.GlMatrix</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\if-ws-glmatrix-tests\IntelliFactory.WebSharper.GlMatrix.Tests.fsproj">
+      <Project>{BB42AD3F-9110-4D95-A23F-36B4F2F900FA}</Project>
+      <Name>IntelliFactory.WebSharper.GlMatrix.Tests</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\IntelliFactory.WebSharper.GlMatrix\IntelliFactory.WebSharper.GlMatrix.fsproj">
-      <Project>{730AE40A-001C-4137-972D-898DC7C2BF0A}</Project>
-      <Name>IntelliFactory.WebSharper.JQuery</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\samples\IntelliFactory.WebSharper.GlMatrix.Samples.fsproj">
-      <Project>{BB42AD3F-9110-4D95-A23F-36B4F2F900FA}</Project>
-      <Name>IntelliFactory.WebSharper.JQuery.Samples</Name>
-    </ProjectReference>
+    <Compile Include="Properties\Properties.cs" />
   </ItemGroup>
   <ProjectExtensions>
     <VisualStudio>
@@ -104,11 +97,7 @@
       </FlavorProperties>
     </VisualStudio>
   </ProjectExtensions>
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" />
+  <Import Project="..\.build\lib\IntelliFactory.WebSharper.Web.targets" />
 </Project>
