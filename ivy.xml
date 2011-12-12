@@ -6,7 +6,7 @@
     <artifact name="if-ws-glmatrix-docs" ext="zip" type="doc" />
   </publications>
   <dependencies>
-    <dependency name="if-ws" rev="latest.integration" />
+    <dependency name="WebSharper" rev="latest.integration" />
     <dependency name="if-ws-webgl" rev="latest.integration" />
   </dependencies>
 </ivy-module>
