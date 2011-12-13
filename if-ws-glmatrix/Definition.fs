@@ -5,6 +5,7 @@ open IntelliFactory.WebSharper.WebGL
 
 module JQuery =
     open IntelliFactory.WebSharper.InterfaceGenerator
+    open IntelliFactory.WebSharper.Html5
 
     let Vec3 = Type.New()
     let Mat4 = Type.New()

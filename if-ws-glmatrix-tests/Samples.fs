@@ -137,9 +137,9 @@ void main(void)
             let vertexPosition = gl.GetAttribLocation(program, "position")
             gl.EnableVertexAttribArray(vertexPosition)
             let vertexBuffer = gl.CreateBuffer()
-            let vertices = Float32Array([| 0.0;  1.0; 0.0;
-                                          -1.0; -1.0; 0.0;
-                                           1.0; -1.0; 0.0; |])
+            let vertices = Float32Array([| 0.0f;  1.0f; 0.0f;
+                                          -1.0f; -1.0f; 0.0f;
+                                           1.0f; -1.0f; 0.0f; |])
             gl.BindBuffer(gl.ARRAY_BUFFER, vertexBuffer)
             gl.BufferData(gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW)
             gl.VertexAttribPointer(vertexPosition, 3, gl.FLOAT, false, 0, 0)
@@ -168,17 +168,17 @@ void main(void)
         let vertexTexCoord = gl.GetAttribLocation(program, "texCoord")
         gl.EnableVertexAttribArray(vertexTexCoord)
         let vertexBuffer = gl.CreateBuffer()
-        let vertices = Float32Array([| -1.; -1.; 0.;    0.; 0.;
-                                       -1.;  1.; 0.;    0.; 1.;
-                                        1.; -1.; 0.;    1.; 0.;
-                                        1.;  1.; 0.;    1.; 1.;
-                                       -1.;  1.; 0.;    0.; 1.;
-                                        1.; -1.; 0.;    1.; 0.; |])
+        let vertices = Float32Array([| -1.f; -1.f; 0.f; 0.f; 0.f;
+                                       -1.f;  1.f; 0.f; 0.f; 1.f;
+                                        1.f; -1.f; 0.f; 1.f; 0.f;
+                                        1.f;  1.f; 0.f; 1.f; 1.f;
+                                       -1.f;  1.f; 0.f; 0.f; 1.f;
+                                        1.f; -1.f; 0.f; 1.f; 0.f; |])
         gl.BindBuffer(gl.ARRAY_BUFFER, vertexBuffer)
         gl.BufferData(gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW)
         let floatSize = Float32Array.BYTES_PER_ELEMENT
-        gl.VertexAttribPointer(vertexPosition, 3, gl.FLOAT, false, 5*floatSize, 0)
-        gl.VertexAttribPointer(vertexTexCoord, 2, gl.FLOAT, false, 5*floatSize, 3*floatSize)
+        gl.VertexAttribPointer(vertexPosition, 3, gl.FLOAT, false, 5*int floatSize, 0)
+        gl.VertexAttribPointer(vertexTexCoord, 2, gl.FLOAT, false, 5*int floatSize, 3*int floatSize)
         (vertexBuffer, 6)
 
     [<JavaScript>]
