@@ -463,19 +463,12 @@ module Definition =
                 |> WithComment "Returns a string representation of a quatenion"
             ]
 
-    let GlMatrix =
-        Class "glMatrix"
-        |+> [
-            "toRadian" => T<float -> float>
-        ]
-
     let Assembly =
         Assembly [
             Namespace "IntelliFactory.WebSharper.GlMatrix.Resources" [
                 (Resource "Js" "gl-matrix-min.js").AssemblyWide()
             ]
             Namespace "IntelliFactory.WebSharper.GlMatrix" [
-                GlMatrix
                 Vec2Class
                 Vec3Class
                 Vec4Class
