@@ -1,12 +1,12 @@
 ﻿namespace IntelliFactory.WebSharper.GlMatrix.Tests
 
 open IntelliFactory.WebSharper
-open IntelliFactory.WebSharper.Html
-open IntelliFactory.WebSharper.WebGL
-open IntelliFactory.WebSharper.Html5
-open IntelliFactory.WebSharper.GlMatrix
 
 module Main =
+    open IntelliFactory.WebSharper.Html
+    open IntelliFactory.WebSharper.Html5
+    open IntelliFactory.WebSharper.Html5.WebGL
+    open IntelliFactory.WebSharper.GlMatrix
 
     [<Inline "G_vmlCanvasManager.initElement($elem)">]
     let Initialize (elem: CanvasElement) : unit = ()
@@ -103,7 +103,7 @@ void main(void)
         let aspectRatio = 4./3.
         let nearPlane = 1.
         let farPlane = 10000.
-        let perspectiveMatrix = Mat4.Perspective(fieldOfView, aspectRatio, nearPlane, farPlane)
+        let perspectiveMatrix = Mat4.Perspective(Mat4.Create(), fieldOfView, aspectRatio, nearPlane, farPlane)
         let uPerspectiveMatrix = gl.GetUniformLocation(program, "perspectiveMatrix")
         gl.UniformMatrix4fv(uPerspectiveMatrix, false, As<Float32Array> perspectiveMatrix)
 
@@ -117,8 +117,8 @@ void main(void)
         let rec RunFrame (i : int) () =
             let angle = 2. * float i * System.Math.PI / 1000.
             let modelViewMatrix = Mat4.Identity(Mat4.Create())
-            Mat4.Translate(modelViewMatrix, [|0.; 0.; -4.|]) |> ignore
-            Mat4.RotateY(modelViewMatrix, angle) |> ignore
+            let modelViewMatrix = Mat4.Translate(modelViewMatrix, modelViewMatrix, Vec3.FromValues(0., 0., -4.))
+            let modelViewMatrix = Mat4.RotateY(modelViewMatrix, modelViewMatrix, angle)
             gl.UniformMatrix4fv(uModelViewMatrix, false, As<Float32Array> modelViewMatrix)
             gl.Clear(gl.COLOR_BUFFER_BIT ||| gl.DEPTH_BUFFER_BIT)
             gl.BindBuffer(gl.ARRAY_BUFFER, buf)
@@ -211,7 +211,7 @@ void main(void)
             let program = CreateProgram(gl, BasicVertexShader, TexturingFragmentShader)
             let vertexBuffer, numberVertices = CreateSquare(gl, program)
             gl.UseProgram(program)
-            let projectionMatrix = Mat4.Ortho(-1., 1., -1., 1., 0., 1.)
+            let projectionMatrix = Mat4.Ortho(Mat4.Create(), -1., 1., -1., 1., 0., 1.)
             let uPerspectiveMatrix = gl.GetUniformLocation(program, "perspectiveMatrix")
             gl.UniformMatrix4fv(uPerspectiveMatrix, false, As<Float32Array> projectionMatrix)
             let uModelViewMatrix = gl.GetUniformLocation(program, "modelViewMatrix")
@@ -220,8 +220,8 @@ void main(void)
                 let rec RunFrame (i : int) () =
                     let angle = 2. * float i * System.Math.PI / 1000.
                     let modelViewMatrix = Mat4.Identity(Mat4.Create())
-                    Mat4.Scale(modelViewMatrix, [|0.999**float i; 0.999**float i; 1.;|]) |> ignore
-                    Mat4.RotateZ(modelViewMatrix, angle) |> ignore
+                    let modelViewMatrix = Mat4.Scale(modelViewMatrix, modelViewMatrix, Vec3.FromValues(0.999**float i, 0.999**float i, 1.))
+                    let modelViewMatrix = Mat4.RotateZ(modelViewMatrix, modelViewMatrix, angle)
                     gl.UniformMatrix4fv(uModelViewMatrix, false, As<Float32Array> modelViewMatrix)
                     gl.Clear(gl.DEPTH_BUFFER_BIT)
                     gl.DrawArrays(gl.TRIANGLES, 0, 6)
@@ -249,3 +249,28 @@ type Samples() =
     [<JavaScript>]
     override this.Body = Main.Samples() :> _
 
+
+open IntelliFactory.WebSharper.Sitelets
+
+type Action = | Index
+
+module Site =
+
+    open IntelliFactory.Html
+
+    let HomePage =
+        Content.PageContent <| fun ctx ->
+            { Page.Default with
+                Title = Some "WebSharper glMatrix Tests"
+                Body = [Div [new Samples()]] }
+
+    let Main = Sitelet.Content "/" Index HomePage
+
+[<Sealed>]
+type Website() =
+    interface IWebsite<Action> with
+        member this.Sitelet = Site.Main
+        member this.Actions = [Action.Index]
+
+[<assembly: Website(typeof<Website>)>]
+do ()
