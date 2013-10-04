@@ -20,8 +20,13 @@ bt.Solution [
     test
 
     bt.NuGet.CreatePackage()
-        .Description("WebSharper Extensions for glMatrix 2.2.0")
-        .ProjectUrl("https://github.com/intellifactory/websharper.glmatrix")
+        .Configure(fun c ->
+            { c with
+                Title = Some "WebSharper.GlMatrix-2.2.0"
+                LicenseUrl = Some "http://websharper.com/licensing"
+                ProjectUrl = Some "https://github.com/intellifactory/websharper.glmatrix"
+                Description = "WebSharper Extensions for glMatrix 2.2.0"
+                RequiresLicenseAcceptance = true })
         .Add(main)
 
 ]
