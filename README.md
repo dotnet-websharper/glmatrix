@@ -1,7 +1,8 @@
 ﻿# Overview
 
-This WebSharper Extension provides a set of classes and functions almost
-identical to the ones documented in [glMatrix](http://glmatrix.googlecode.com). When used
+This WebSharper Extension provides a set of classes and functions
+almost identical to the ones documented in
+[glMatrix](http://glmatrix.googlecode.com), version 2.2.0. When used
 in WebSharper projects, these stub classes delegate the work to the
 actual classes implemented by the browser.
 
