@@ -114,7 +114,7 @@ module Definition =
                 "sub" => c?out * c?a * c?b ^-> c
                 |> WithComment "Subtracts vector b from vector a"
 
-                "substract" => c?out * c?a * c?b ^-> c
+                "subtract" => c?out * c?a * c?b ^-> c
                 |> WithComment "Subtracts vector b from vector a"
             ]
 
