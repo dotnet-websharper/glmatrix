@@ -51,7 +51,7 @@ module Definition =
                 "divide" => c?out * c?a * c?b ^-> c
                 |> WithComment "Divides two vectors"
 
-                "dot" => c?a * c?b ^-> c
+                "dot" => c?a * c?b ^-> T<float>
                 |> WithComment "Calculates the dot product of two vectors"
 
                 "forEach" => T<Float32Array>?a * T<int>?stride * T<int>?offset * T<int>?count * (c ^-> T<unit>)?f ^-> T<Float32Array>
