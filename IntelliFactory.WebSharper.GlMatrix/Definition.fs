@@ -1,9 +1,9 @@
 ﻿namespace IntelliFactory.WebSharper.GlMatrixExtension
 
-open IntelliFactory.WebSharper.Dom
-open IntelliFactory.WebSharper.Html5
-open IntelliFactory.WebSharper.Html5.WebGL
+open IntelliFactory.WebSharper
+open IntelliFactory.WebSharper.JavaScript.Dom
 open IntelliFactory.WebSharper.InterfaceGenerator
+type Float32Array = JavaScript.Float32Array
 
 module Definition =
 

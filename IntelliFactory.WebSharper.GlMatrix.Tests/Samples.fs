@@ -3,9 +3,8 @@
 open IntelliFactory.WebSharper
 
 module Main =
-    open IntelliFactory.WebSharper.Html
-    open IntelliFactory.WebSharper.Html5
-    open IntelliFactory.WebSharper.Html5.WebGL
+    open IntelliFactory.WebSharper.Html.Client
+    open IntelliFactory.WebSharper.JavaScript
     open IntelliFactory.WebSharper.GlMatrix
 
     [<Inline "G_vmlCanvasManager.initElement($elem)">]
@@ -14,13 +13,13 @@ module Main =
     [<JavaScript>]
     let CreateContext (element : Element) =
         let canvas = As<CanvasElement> element.Dom
-        if canvas?getContext = JavaScript.Undefined then
+        if canvas?getContext = JS.Undefined then
             Initialize canvas
         canvas.Width <- 400
         canvas.Height <- 300
         ["webgl"; "experimental-webgl"]
         |> List.tryPick (fun s ->
-            let gl = As<WebGLRenderingContext> (canvas.GetContext s)
+            let gl = As<WebGL.RenderingContext> (canvas.GetContext s)
             if gl = null then None else Some gl)
 
     [<JavaScript>]
@@ -67,12 +66,12 @@ void main(void)
 }"
 
     [<JavaScript>]
-    let CreateProgram (gl : WebGLRenderingContext, vertexSource, fragmentSource) =
+    let CreateProgram (gl : WebGL.RenderingContext, vertexSource, fragmentSource) =
         let vs = gl.CreateShader(gl.VERTEX_SHADER)
         gl.ShaderSource(vs, vertexSource)
         gl.CompileShader(vs)
         if not(As<bool>(gl.GetShaderParameter(vs, gl.COMPILE_STATUS))) then
-            JavaScript.Alert(
+            JS.Alert(
                 "Couldn't compile the vertex shader:\n" +
                 gl.GetShaderInfoLog(vs))
             gl.DeleteShader(vs)
@@ -80,7 +79,7 @@ void main(void)
         gl.ShaderSource(fs, fragmentSource)
         gl.CompileShader(fs)
         if not(As<bool>(gl.GetShaderParameter(fs, gl.COMPILE_STATUS))) then
-            JavaScript.Alert(
+            JS.Alert(
                 "Couldn't compile the fragment shader:\n" +
                 gl.GetShaderInfoLog(fs))
             gl.DeleteShader(fs)
@@ -89,7 +88,7 @@ void main(void)
         gl.AttachShader(program, fs)
         gl.LinkProgram(program)
         if not(As<bool>(gl.GetProgramParameter(program, gl.LINK_STATUS))) then
-            JavaScript.Alert(
+            JS.Alert(
                 "Couldn't link the shader program:\n" +
                 gl.GetProgramInfoLog(program))
             gl.DeleteProgram(program)
@@ -98,7 +97,7 @@ void main(void)
         program
 
     [<JavaScript>]
-    let SetupView (gl : WebGLRenderingContext, program) =
+    let SetupView (gl : WebGL.RenderingContext, program) =
         let fieldOfView = 45.
         let aspectRatio = 4./3.
         let nearPlane = 1.
@@ -108,7 +107,7 @@ void main(void)
         gl.UniformMatrix4fv(uPerspectiveMatrix, false, As<Float32Array> perspectiveMatrix)
 
     [<JavaScript>]
-    let DrawRotatingObject (gl : WebGLRenderingContext,
+    let DrawRotatingObject (gl : WebGL.RenderingContext,
                             program, buf, numVertices) =
         gl.ClearColor(0., 0., 0., 0.)
         gl.UseProgram(program)
@@ -124,14 +123,14 @@ void main(void)
             gl.BindBuffer(gl.ARRAY_BUFFER, buf)
             gl.DrawArrays(gl.TRIANGLES, 0, numVertices)
             gl.Flush()
-            JavaScript.SetTimeout (RunFrame ((i + 20) % 1000)) 20 |> ignore
+            JS.SetTimeout (RunFrame ((i + 20) % 1000)) 20 |> ignore
         RunFrame 0 ()
 
     [<JavaScript>]
     let DrawTriangle () =
         let canvas = HTML5.Tags.Canvas []
         match CreateContext canvas with
-        | None -> JavaScript.Alert "Couldn't create WebGL context."
+        | None -> JS.Alert "Couldn't create WebGL context."
         | Some gl ->
             let program = CreateProgram(gl, BasicVertexShader, BasicFragmentShader)
             let vertexPosition = gl.GetAttribLocation(program, "position")
@@ -147,7 +146,7 @@ void main(void)
         canvas
 
     [<JavaScript>]
-    let MakeAndBindTexture (gl : WebGLRenderingContext) f =
+    let MakeAndBindTexture (gl : WebGL.RenderingContext) f =
         Img []
         |>! Events.OnLoad (fun img ->
             let tex = gl.CreateTexture()
@@ -162,7 +161,7 @@ void main(void)
         |> ignore
 
     [<JavaScript>]
-    let CreateSquare (gl : WebGLRenderingContext, program) =
+    let CreateSquare (gl : WebGL.RenderingContext, program) =
         let vertexPosition = gl.GetAttribLocation(program, "position")
         gl.EnableVertexAttribArray(vertexPosition)
         let vertexTexCoord = gl.GetAttribLocation(program, "texCoord")
@@ -186,7 +185,7 @@ void main(void)
         let otherCanvas = HTML5.Tags.Canvas []
         let canvas = HTML5.Tags.Canvas [Attr.Style "position:absolute;"]
         match CreateContext canvas with
-        | None -> JavaScript.Alert "Couldn't create WebGL context."
+        | None -> JS.Alert "Couldn't create WebGL context."
         | Some gl ->
             let program = CreateProgram(gl, BasicVertexShader, TexturingFragmentShader)
             let vertexBuffer, numberVertices = CreateSquare(gl, program)
@@ -206,7 +205,7 @@ void main(void)
         let otherCanvas = HTML5.Tags.Canvas []
         let canvas = HTML5.Tags.Canvas []
         match CreateContext canvas with
-        | None -> JavaScript.Alert "Couldn't create WebGL context."
+        | None -> JS.Alert "Couldn't create WebGL context."
         | Some gl ->
             let program = CreateProgram(gl, BasicVertexShader, TexturingFragmentShader)
             let vertexBuffer, numberVertices = CreateSquare(gl, program)
@@ -226,7 +225,7 @@ void main(void)
                     gl.Clear(gl.DEPTH_BUFFER_BIT)
                     gl.DrawArrays(gl.TRIANGLES, 0, 6)
                     gl.Flush()
-                    JavaScript.SetTimeout (RunFrame ((i + 20) % 5000)) 20 |> ignore
+                    JS.SetTimeout (RunFrame ((i + 20) % 5000)) 20 |> ignore
                 RunFrame 0 ()
         canvas
 
@@ -256,7 +255,7 @@ type Action = | Index
 
 module Site =
 
-    open IntelliFactory.Html
+    open IntelliFactory.WebSharper.Html.Server
 
     let HomePage =
         Content.PageContent <| fun ctx ->
