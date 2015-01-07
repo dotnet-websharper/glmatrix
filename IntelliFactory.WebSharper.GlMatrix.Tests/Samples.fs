@@ -24,7 +24,7 @@ module Main =
 
     [<JavaScript>]
     let BasicContext () =
-        let element = HTML5.Tags.Canvas []
+        let element = Tags.Canvas []
         match CreateContext element with
         | None -> ()
         | Some gl ->
@@ -128,7 +128,7 @@ void main(void)
 
     [<JavaScript>]
     let DrawTriangle () =
-        let canvas = HTML5.Tags.Canvas []
+        let canvas = Tags.Canvas []
         match CreateContext canvas with
         | None -> JS.Alert "Couldn't create WebGL context."
         | Some gl ->
@@ -182,8 +182,8 @@ void main(void)
 
     [<JavaScript>]
     let DrawTexturedSquare () =
-        let otherCanvas = HTML5.Tags.Canvas []
-        let canvas = HTML5.Tags.Canvas [Attr.Style "position:absolute;"]
+        let otherCanvas = Tags.Canvas []
+        let canvas = Tags.Canvas [Attr.Style "position:absolute;"]
         match CreateContext canvas with
         | None -> JS.Alert "Couldn't create WebGL context."
         | Some gl ->
@@ -202,8 +202,8 @@ void main(void)
 
     [<JavaScript>]
     let DrawTunnel () =
-        let otherCanvas = HTML5.Tags.Canvas []
-        let canvas = HTML5.Tags.Canvas []
+        let otherCanvas = Tags.Canvas []
+        let canvas = Tags.Canvas []
         match CreateContext canvas with
         | None -> JS.Alert "Couldn't create WebGL context."
         | Some gl ->
