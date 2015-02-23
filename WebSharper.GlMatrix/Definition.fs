@@ -1,8 +1,8 @@
-﻿namespace IntelliFactory.WebSharper.GlMatrixExtension
+﻿namespace WebSharper.GlMatrixExtension
 
-open IntelliFactory.WebSharper
-open IntelliFactory.WebSharper.JavaScript.Dom
-open IntelliFactory.WebSharper.InterfaceGenerator
+open WebSharper
+open WebSharper.JavaScript.Dom
+open WebSharper.InterfaceGenerator
 type Float32Array = JavaScript.Float32Array
 
 module Definition =
@@ -20,7 +20,7 @@ module Definition =
 
         let Vec (c : CodeModel.Class) =
             c
-            |+> [
+            |+> Static [
                 Constructor T<Float32Array>?arr
                 |> WithInline "$arr"
 
@@ -120,7 +120,7 @@ module Definition =
 
         let Cross  (c : CodeModel.Class) =
             c
-            |+> [
+            |+> Static [
                 "cross" => Vec3?out * c?a * c?b ^-> Vec3
                 |> WithComment "Computes the cross product of two vectors. Note that the cross product must by definition produce a 3D vector"
             ]
@@ -130,7 +130,7 @@ module Definition =
         |=> Vec2
         |> VecMixin.Vec
         |> VecMixin.Cross
-        |+> [
+        |+> Static [
             Constructor T<float * float>?tup
             |> WithInline "$tup"
 
@@ -149,12 +149,12 @@ module Definition =
             "transformMat4" => Vec2?out * Vec2?a * Mat4?m ^-> Vec2
             |> WithComment "Transforms the vec2 with a mat4. 3rd vector component is implicitly 0. 4th vector component is implicitly 1."
         ]
-        |+> Protocol [
-            "x" =% T<float>
+        |+> Instance [
+            "x" =@ T<float>
             |> WithSetterInline "$this[0]=$value"
             |> WithGetterInline "$this[0]"
 
-            "y" =% T<float>
+            "y" =@ T<float>
             |> WithSetterInline "$this[1]=$value"
             |> WithGetterInline "$this[1]"
         ]
@@ -164,7 +164,7 @@ module Definition =
         |=> Vec3
         |> VecMixin.Vec
         |> VecMixin.Cross
-        |+> [
+        |+> Static [
             Constructor T<float * float * float>?tup
             |> WithInline "$tup"
 
@@ -180,16 +180,16 @@ module Definition =
             "transformQuat" => Vec3?out * Vec3?a * Quat?q ^-> Vec3
             |> WithComment "Transforms the vec3 with a quat"
         ]
-        |+> Protocol [
-            "x" =% T<float>
+        |+> Instance [
+            "x" =@ T<float>
             |> WithSetterInline "$this[0]=$value"
             |> WithGetterInline "$this[0]"
 
-            "y" =% T<float>
+            "y" =@ T<float>
             |> WithSetterInline "$this[1]=$value"
             |> WithGetterInline "$this[1]"
 
-            "z" =% T<float>
+            "z" =@ T<float>
             |> WithSetterInline "$this[2]=$value"
             |> WithGetterInline "$this[2]"
         ]
@@ -199,7 +199,7 @@ module Definition =
         |=> Vec4
         |> VecMixin.Vec
         |> VecMixin.Cross
-        |+> [
+        |+> Static [
             Constructor T<float * float * float * float>?tup
             |> WithInline "$tup"
 
@@ -212,20 +212,20 @@ module Definition =
             "transformQuat" => Vec4?out * Vec4?a * Quat?q ^-> Vec4
             |> WithComment "Transforms the vec4 with a quat"
         ]
-        |+> Protocol [
-            "x" =% T<float>
+        |+> Instance [
+            "x" =@ T<float>
             |> WithSetterInline "$this[0]=$value"
             |> WithGetterInline "$this[0]"
 
-            "y" =% T<float>
+            "y" =@ T<float>
             |> WithSetterInline "$this[1]=$value"
             |> WithGetterInline "$this[1]"
 
-            "z" =% T<float>
+            "z" =@ T<float>
             |> WithSetterInline "$this[2]=$value"
             |> WithGetterInline "$this[2]"
 
-            "w" =% T<float>
+            "w" =@ T<float>
             |> WithSetterInline "$this[3]=$value"
             |> WithGetterInline "$this[3]"
         ]
@@ -235,7 +235,7 @@ module Definition =
         let Mat scaleV (c : CodeModel.Class) =
             c
             |=> Inherits T<Float32Array>
-            |+> [
+            |+> Static [
                 Constructor T<Float32Array>?arr
                 |> WithInline "$arr"
 
@@ -276,7 +276,7 @@ module Definition =
 
         let Square (c : CodeModel.Class) =
             c
-            |+> [
+            |+> Static [
 
                 "adjoint" => c?out * c?a ^-> c
                 |> WithComment "Calculates the adjugate of a matrix"
@@ -288,14 +288,14 @@ module Definition =
 
         let Rotate (c : CodeModel.Class) =
             c
-            |+> [
+            |+> Static [
                 "rotate" => c?out * c?a * T<float>?rad ^-> c
                 |> WithComment "Rotates a matrix by the given angle"
             ]
 
         let Translate v (c : CodeModel.Class) =
             c
-            |+> [
+            |+> Static [
                 "translate" => c?out * c?a * v?v ^-> c
                 |> WithComment "Translate a matrix by the given vector"
             ]
@@ -321,7 +321,7 @@ module Definition =
         |> MatMixin.Square
         |> MatMixin.Rotate
         |> MatMixin.Translate Vec2
-        |+> [
+        |+> Static [
             "fromMat2d" => Mat3?out * Mat2d?a ^-> Mat3
             |> WithComment "Copies the values from a mat2d into a mat3"
 
@@ -341,7 +341,7 @@ module Definition =
         |> MatMixin.Mat Vec3
         |> MatMixin.Square
         |> MatMixin.Translate Vec3
-        |+> [
+        |+> Static [
             "fromQuat" => Mat4?out * Quat?q ^-> Mat4
             |> WithComment "Calculates a 4x4 matrix from the given quaternion"
 
@@ -377,7 +377,7 @@ module Definition =
         Class "quat"
         |=> Quat
         |=> Inherits T<Float32Array>
-        |+> [
+        |+> Static [
                 Constructor T<Float32Array>?arr
                 |> WithInline "$arr"
 
@@ -465,10 +465,10 @@ module Definition =
 
     let Assembly =
         Assembly [
-            Namespace "IntelliFactory.WebSharper.GlMatrix.Resources" [
+            Namespace "WebSharper.GlMatrix.Resources" [
                 (Resource "Js" "gl-matrix-min.js").AssemblyWide()
             ]
-            Namespace "IntelliFactory.WebSharper.GlMatrix" [
+            Namespace "WebSharper.GlMatrix" [
                 Vec2Class
                 Vec3Class
                 Vec4Class

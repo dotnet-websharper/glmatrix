@@ -7,12 +7,12 @@ let bt =
     |> fun bt -> bt.WithFramework(bt.Framework.Net40)
 
 let main =
-    bt.WebSharper.Extension("IntelliFactory.WebSharper.GlMatrix")
+    bt.WebSharper.Extension("WebSharper.GlMatrix")
         .Embed(["gl-matrix-min.js"])
         .SourcesFromProject()
 
 let test =
-    bt.WebSharper.HtmlWebsite("IntelliFactory.WebSharper.GlMatrix.Tests")
+    bt.WebSharper.HtmlWebsite("WebSharper.GlMatrix.Tests")
         .SourcesFromProject()
         .References(fun r -> [r.Project main])
 

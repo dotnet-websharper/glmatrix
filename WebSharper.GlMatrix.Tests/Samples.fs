@@ -1,11 +1,11 @@
-﻿namespace IntelliFactory.WebSharper.GlMatrix.Tests
+﻿namespace WebSharper.GlMatrix.Tests
 
-open IntelliFactory.WebSharper
+open WebSharper
 
 module Main =
-    open IntelliFactory.WebSharper.Html.Client
-    open IntelliFactory.WebSharper.JavaScript
-    open IntelliFactory.WebSharper.GlMatrix
+    open WebSharper.Html.Client
+    open WebSharper.JavaScript
+    open WebSharper.GlMatrix
 
     [<Inline "G_vmlCanvasManager.initElement($elem)">]
     let Initialize (elem: CanvasElement) : unit = ()
@@ -249,13 +249,13 @@ type Samples() =
     override this.Body = Main.Samples() :> _
 
 
-open IntelliFactory.WebSharper.Sitelets
+open WebSharper.Sitelets
 
 type Action = | Index
 
 module Site =
 
-    open IntelliFactory.WebSharper.Html.Server
+    open WebSharper.Html.Server
 
     let HomePage =
         Content.PageContent <| fun ctx ->
