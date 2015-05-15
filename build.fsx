@@ -2,9 +2,10 @@
 open IntelliFactory.Build
 
 let bt =
-    BuildTool().PackageId("WebSharper.GlMatrix", "3.0")
+    BuildTool().PackageId("WebSharper.GlMatrix")
+        .VersionFrom("WebSharper")
+        .WithFramework(fun fw -> fw.Net40)
         .References(fun r -> [r.Assembly "System.Web"])
-    |> fun bt -> bt.WithFramework(bt.Framework.Net40)
 
 let main =
     bt.WebSharper.Extension("WebSharper.GlMatrix")
