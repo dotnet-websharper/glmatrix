@@ -148,7 +148,7 @@ void main(void)
     [<JavaScript>]
     let MakeAndBindTexture (gl : WebGL.RenderingContext) f =
         Img []
-        |>! OnLoad (fun img ->
+        |>! Events.OnLoad (fun img _ ->
             let tex = gl.CreateTexture()
             gl.ActiveTexture(gl.TEXTURE0)
             gl.BindTexture(gl.TEXTURE_2D, tex)

@@ -11,6 +11,7 @@
     <RootNamespace>$(Name)</RootNamespace>
     <AssemblyName>$(Name)</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <WebSharperProject>Extension</WebSharperProject>
     <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -45,8 +46,7 @@
     </Otherwise>
   </Choose>
   <Import Project="$(FSharpTargetsPath)" />
-  <Import Project="../packages/WebSharper.2.5.119.54/build/WebSharper.targets" />
-  <Import Project="../build/net45/$(Name).proj" />
+  <Import Project="../build/net40/$(Name).proj" />
   <ItemGroup>
     <Compile Include="Definition.fs" />
     <EmbeddedResource Include="gl-matrix-min.js" />
