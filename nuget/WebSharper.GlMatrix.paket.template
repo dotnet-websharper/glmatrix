@@ -1,0 +1,19 @@
+type file
+id WebSharper.GlMatrix
+authors
+    IntelliFactory
+owners
+    IntelliFactory
+licenseUrl http://websharper.com/licensing
+projectUrl https://github.com/intellifactory/websharper.glmatrix
+description
+    WebSharper Extensions for glMatrix 2.2.0
+tags
+    Web JavaScript F# C#
+files
+    ../WebSharper.GlMatrix/bin/Release/netstandard2.0/WebSharper.GlMatrix.dll ==> lib/netstandard2.0
+    ../WebSharper.GlMatrix/bin/Release/netstandard2.0/WebSharper.GlMatrix.xml ==> lib/netstandard2.0
+dependencies
+        WebSharper LOCKEDVERSION
+frameworkAssemblies
+        System.Web
