@@ -14,4 +14,4 @@ files
     ../WebSharper.GlMatrix/bin/Release/netstandard2.0/WebSharper.GlMatrix.dll ==> lib/netstandard2.0
     ../WebSharper.GlMatrix/bin/Release/netstandard2.0/WebSharper.GlMatrix.xml ==> lib/netstandard2.0
 dependencies
-        WebSharper >= LOCKEDVERSION
+        WebSharper ~> 4.2.0-alpha
