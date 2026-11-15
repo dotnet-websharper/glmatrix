@@ -1,14 +1,21 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>net461;netstandard2.0</TargetFrameworks>
-    <WebSharperProject>Extension</WebSharperProject>
+    <TargetFramework>netstandard2.0</TargetFramework>
     <WebSharperSourceMap>false</WebSharperSourceMap>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <Product>WebSharper.GlMatrix 3.4.4+</Product>
+    <Title>https://github.com/dotnet-websharper/glmatrix/</Title>
+    <Company>IntelliFactory</Company>
+    <Copyright>(c) 2008-2026 IntelliFactory</Copyright>
+  </PropertyGroup>
+  <PropertyGroup>
+    <NpmDependencies>
+      <NpmPackage Name="gl-matrix" Version="&gt;= 3.4.4 &lt; 4.0.0" ResolutionStrategy="Max" />
+    </NpmDependencies>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Definition.fs" />
-    <EmbeddedResource Include="gl-matrix-min.js" />
+    <Compile Include="Main.fs" />
+    <None Include="wsconfig.json" />
   </ItemGroup>
-  <Import Project="..\paket-files\wsbuild\github.com\dotnet-websharper\build-script\WebSharper.Fake.targets" Condition="Exists('..\paket-files\wsbuild\github.com\dotnet-websharper\build-script\WebSharper.Fake.targets')" />
   <Import Project="..\.paket\Paket.Restore.targets" />
 </Project>
