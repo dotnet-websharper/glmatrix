@@ -1,0 +1,11 @@
+{
+  "name": "websharper.glmatrix.sample",
+  "version": "1.0.0",
+  "private": true,
+  "devDependencies": {
+    "esbuild": "^0.28.1"
+  },
+  "dependencies": {
+    "gl-matrix": "^3.4.4"
+  }
+}

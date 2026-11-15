@@ -4,16 +4,18 @@ authors
     IntelliFactory
 owners
     IntelliFactory
-licenseUrl http://websharper.com/licensing
-projectUrl https://github.com/intellifactory/websharper.glmatrix
+repositoryType git
+repositoryUrl https://github.com/dotnet-websharper/glmatrix/
+licenseUrl https://github.com/dotnet-websharper/glmatrix/blob/main/LICENSE.md
+iconUrl https://github.com/dotnet-websharper/core/raw/websharper50/tools/WebSharper.png
+projectUrl https://github.com/dotnet-websharper/glmatrix
 description
-    WebSharper Extensions for glMatrix 2.2.0
+    WebSharper bindings for gl-matrix
 tags
-    Web JavaScript F# C#
+    Web JavaScript F# C# glMatrix WebGL matrix vector quaternion
 files
-    ../WebSharper.GlMatrix/bin/Release/net461/WebSharper.GlMatrix.dll ==> lib/net461
-    ../WebSharper.GlMatrix/bin/Release/net461/WebSharper.GlMatrix.xml ==> lib/net461
     ../WebSharper.GlMatrix/bin/Release/netstandard2.0/WebSharper.GlMatrix.dll ==> lib/netstandard2.0
+    ../WebSharper.GlMatrix/bin/Release/netstandard2.0/WebSharper.GlMatrix.websharper ==> lib/netstandard2.0
     ../WebSharper.GlMatrix/bin/Release/netstandard2.0/WebSharper.GlMatrix.xml ==> lib/netstandard2.0
 dependencies
         WebSharper ~> LOCKEDVERSION:[3]
