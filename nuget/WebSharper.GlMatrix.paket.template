@@ -15,7 +15,6 @@ tags
     Web JavaScript F# C# glMatrix WebGL matrix vector quaternion
 files
     ../WebSharper.GlMatrix/bin/Release/netstandard2.0/WebSharper.GlMatrix.dll ==> lib/netstandard2.0
-    ../WebSharper.GlMatrix/bin/Release/netstandard2.0/WebSharper.GlMatrix.websharper ==> lib/netstandard2.0
     ../WebSharper.GlMatrix/bin/Release/netstandard2.0/WebSharper.GlMatrix.xml ==> lib/netstandard2.0
 dependencies
         WebSharper ~> LOCKEDVERSION:[3]
