@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>WebSharper.GlMatrix — sample</title>
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect width='16' height='16' rx='3' fill='%234f46e5'/%3E%3Cpath d='M3 10h10M8 3v10M4 7l4-4 4 4' stroke='white' stroke-width='1.4' fill='none' stroke-linecap='round'/%3E%3C/svg%3E" />
+    <script>
+        // Apply a previously chosen theme before first paint. Light is the
+        // default; the key is shared with Client.fs (themeStorageKey).
+        try {
+            var t = localStorage.getItem('websharper-glmatrix-theme');
+            if (t === 'dark' || t === 'light') document.documentElement.setAttribute('data-theme', t);
+        } catch (e) { }
+    </script>
+    <link rel="stylesheet" href="site.css" />
+    <!-- gl-matrix is bundled from the npm package; the WebSharper head is folded in here. -->
+    
+</head>
+<body>
+    <header class="app-header">
+        <div class="app-titles">
+            <h1>WebSharper.GlMatrix</h1>
+            <p>gl-matrix 3.4 bindings for F# — with <a href="https://websharper.com">WebSharper</a></p>
+        </div>
+        <div class="app-actions">
+            <button class="btn theme-toggle" ws-onclick="ToggleTheme" title="Switch between the light and dark theme">
+                <span>${themeLabel}</span>
+            </button>
+            <a class="app-source" href="https://github.com/dotnet-websharper/glmatrix">Source</a>
+        </div>
+    </header>
+
+    <main class="page">
+        <p class="notice">${notice}</p>
+
+        <section class="card card-wide">
+            <header class="card-header">
+                <h2>WebGL scene</h2>
+                <p>
+                    A spinning cube drawn with <code>Mat4.PerspectiveNO</code>,
+                    <code>Mat4.LookAt</code>, <code>Quat.FromEuler</code> and
+                    <code>Mat4.FromQuat</code>. The matrices are
+                    <code>Float32Array</code>s, so they go straight into
+                    <code>gl.uniformMatrix4fv</code>.
+                </p>
+            </header>
+            <canvas id="scene" class="scene" width="640" height="360"></canvas>
+            <div class="toolbar">
+                <button class="btn btn-primary" ws-onclick="ToggleSpin">Pause rotation</button>
+                <button class="btn" ws-onclick="ResetSpin">Reset rotation</button>
+                <button class="btn" ws-onclick="ToggleShading">Toggle flat shading</button>
+                <button class="btn" ws-onclick="ZoomIn">Zoom in</button>
+                <button class="btn" ws-onclick="ZoomOut">Zoom out</button>
+            </div>
+            <p class="status">${sceneStatus}</p>
+        </section>
+
+        <section class="card">
+            <header class="card-header">
+                <h2>Vectors</h2>
+                <p>
+                    <code>vec2</code>, <code>vec3</code> and <code>vec4</code> arithmetic,
+                    interpolation and transforms.
+                </p>
+            </header>
+            <dl class="readout">
+                <div><dt>a</dt><dd>${vecA}</dd></div>
+                <div><dt>b</dt><dd>${vecB}</dd></div>
+                <div><dt>result</dt><dd>${vecResult}</dd></div>
+            </dl>
+            <div class="toolbar">
+                <button class="btn btn-primary" ws-onclick="VecAdd">Add</button>
+                <button class="btn" ws-onclick="VecSubtract">Subtract</button>
+                <button class="btn" ws-onclick="VecScale">Scale</button>
+                <button class="btn" ws-onclick="VecDot">Dot</button>
+                <button class="btn" ws-onclick="VecCross">Cross</button>
+                <button class="btn" ws-onclick="VecNormalize">Normalize</button>
+                <button class="btn" ws-onclick="VecLerp">Lerp</button>
+                <button class="btn" ws-onclick="VecSlerp">Slerp</button>
+                <button class="btn" ws-onclick="VecDistance">Distance</button>
+                <button class="btn" ws-onclick="VecAngle">Angle</button>
+                <button class="btn" ws-onclick="VecTransform">Transform</button>
+                <button class="btn" ws-onclick="VecMisc">vec2 / vec4</button>
+            </div>
+        </section>
+
+        <section class="card">
+            <header class="card-header">
+                <h2>Matrices</h2>
+                <p>
+                    Composition, inversion and projections across
+                    <code>mat2</code>, <code>mat2d</code>, <code>mat3</code> and <code>mat4</code>.
+                </p>
+            </header>
+            <pre class="matrix">${matrix}</pre>
+            <dl class="readout">
+                <div><dt>info</dt><dd>${matInfo}</dd></div>
+            </dl>
+            <div class="toolbar">
+                <button class="btn btn-primary" ws-onclick="MatCompose">Compose T·R·S</button>
+                <button class="btn" ws-onclick="MatInvert">Invert</button>
+                <button class="btn" ws-onclick="MatDeterminant">Determinant</button>
+                <button class="btn" ws-onclick="MatTranspose">Transpose</button>
+                <button class="btn" ws-onclick="MatAdjoint">Adjoint</button>
+                <button class="btn" ws-onclick="MatFrustum">Frustum</button>
+                <button class="btn" ws-onclick="MatFieldOfView">Field of view</button>
+                <button class="btn" ws-onclick="MatOrtho">Ortho ZO</button>
+                <button class="btn" ws-onclick="Mat3">mat3 normal</button>
+                <button class="btn" ws-onclick="Mat2d">mat2d / mat2</button>
+            </div>
+        </section>
+
+        <section class="card">
+            <header class="card-header">
+                <h2>Quaternions</h2>
+                <p>
+                    <code>quat</code> rotation construction and interpolation, and
+                    <code>quat2</code> dual quaternions carrying a translation.
+                </p>
+            </header>
+            <dl class="readout">
+                <div><dt>quat</dt><dd>${quat}</dd></div>
+                <div><dt>dual quat</dt><dd>${quat2}</dd></div>
+                <div><dt>info</dt><dd>${quatInfo}</dd></div>
+            </dl>
+            <div class="toolbar">
+                <button class="btn btn-primary" ws-onclick="QuatEuler">FromEuler (ZYX)</button>
+                <button class="btn" ws-onclick="QuatAxisAngle">SetAxisAngle</button>
+                <button class="btn" ws-onclick="QuatSlerp">Slerp</button>
+                <button class="btn" ws-onclick="QuatRotate">Rotate X · Y · Z</button>
+                <button class="btn" ws-onclick="QuatRotationTo">RotationTo</button>
+                <button class="btn" ws-onclick="QuatAxis">GetAxisAngle</button>
+                <button class="btn" ws-onclick="Quat2Demo">Dual quat</button>
+                <button class="btn" ws-onclick="Quat2Decompose">Decompose</button>
+            </div>
+        </section>
+
+        <section class="card">
+            <header class="card-header">
+                <h2>Utilities &amp; traversal</h2>
+                <p>
+                    <code>glMatrix</code> helpers, in-place <code>forEach</code> traversal and
+                    <code>mat2.LDU</code> factorization.
+                </p>
+            </header>
+            <dl class="readout">
+                <div><dt>helpers</dt><dd>${utils}</dd></div>
+                <div><dt>forEach</dt><dd>${forEach}</dd></div>
+                <div><dt>LDU</dt><dd>${ldu}</dd></div>
+            </dl>
+            <div class="toolbar">
+                <button class="btn btn-primary" ws-onclick="OnHelpers">Helpers</button>
+                <button class="btn" ws-onclick="OnForEach">forEach scale ×2</button>
+                <button class="btn" ws-onclick="OnLdu">LDU</button>
+            </div>
+        </section>
+    </main>
+
+    <footer class="app-footer">
+        <p>
+            Binding surface generated from the gl-matrix 3.4.4 TypeScript declarations and source.
+            <a href="https://glmatrix.net/">glmatrix.net</a>
+        </p>
+    </footer>
+
+    <script type="text/javascript" src="Scripts/WebSharper.GlMatrix.Sample.min.js"></script>
+</body>
+</html>
